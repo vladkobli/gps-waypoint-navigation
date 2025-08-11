@@ -1,0 +1,24 @@
+/**:
+  ros__parameters:
+    #NTRIP Params
+    ntrip_ip: "93.113.10.123"
+    ntrip_user_name: "sucala.pa33940"
+    ntrip_password: "pek4d3"
+    ntrip_mount_point: "RO_VRS_3.1"
+    ntrip_port: 2101
+    ntrip_location_lat: 46.770439
+    ntrip_location_lon: 23.591423
+
+    #Serial Port Params
+    publish_port_rtcm_active: true # send RTCM into your GPS serial port
+    serial_port: "/dev/ttyACM0"
+    serial_port_baud_rate: 38400
+
+    #RTCM Publisher Params
+    publish_ros_rtcm_active: true # also publish a ROS topic
+    rtcm_topic: "/rtcm"
+
+
+    debug: true
+
+
