@@ -60,6 +60,26 @@ def generate_launch_description():
                     ('odometry/filtered','odometry/local'),
                 ],
             ),
+            # IMU orientation filter
+            launch_ros.actions.Node(
+                package='imu_filter_madgwick',
+                executable='imu_filter_madgwick_node',
+                name='imu_filter',
+                output='screen',
+                parameters=[{'use_mag': False, 'publish_tf': False}],
+                remappings=[
+                    ('/imu/data_raw', '/panther/imu_broadcaster/imu'),
+                    ('/imu/data', '/imu/filtered'),
+                ],
+            ),
+            launch_ros.actions.Node(
+                package='tf2_ros',
+                executable='static_transform_publisher',
+                name='static_tf_gps',
+                # x y z roll pitch yaw parent child
+                arguments=['0.20', '0.00', '1.00',  '0', '0', '0',  'panther/base_link', 'gps'],
+                output='screen',
+            )
             # # (Your waypoint-follower / nav2 controller node)
             # launch_ros.actions.Node(
             #     package="nav2_gps_waypoint_follower_demo",

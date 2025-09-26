@@ -1,0 +1,6 @@
+/oak:
+  ros__parameters:
+    camera:
+      i_enable_imu: true
+      i_enable_ir: true
+      i_pipeline_type: RGBStereo

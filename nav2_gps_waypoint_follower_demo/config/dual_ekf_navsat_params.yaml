@@ -2,34 +2,34 @@
 
 ekf_filter_node_odom:
   ros__parameters:
-    frequency: 30.0
+    frequency: 20.0
     two_d_mode: true # Recommended to use 2d mode for nav2 in mostly planar environments
     print_diagnostics: true
     debug: false
     publish_tf: true
 
     map_frame: map
-    odom_frame: odom
-    base_link_frame: base_link # the frame id used by the turtlebot's diff drive plugin
-    world_frame: odom
+    odom_frame: panther/odom
+    base_link_frame: panther/base_link # the frame id used by the turtlebot's diff drive plugin
+    world_frame: panther/odom
 
     odom0: /panther/odometry/wheels
-    odom0_config: [false, false, false,
-                  false, false, false,
-                  true,  true,  true,
-                  false, false, true,
-                  false, false, false]
+    odom0_config: [ true,  true,  false,   # x y z
+                  false, false, true,    # roll pitch yaw
+                  true,  true,  true,    # vx vy vz
+                  false, false, true,    # vroll vpitch vyaw
+                  false, false, false ]
     odom0_queue_size: 10
     odom0_differential: false
     odom0_relative: false
 
-    imu0: /panther/imu_broadcaster/imu
-    imu0_config: [false, false, false,
-                  false,  false,  true,
-                  false, false, false,
-                  false,  false,  false,
-                  false,  false,  false]
-    imu0_differential: true  # If using a real robot you might want to set this to true, since usually absolute measurements from real imu's are not very accurate
+    imu0: /imu/filtered
+    imu0_config:  [ false,false,false,
+                    true, true, true,
+                    false,false,false,
+                    true, true, true,
+                    true, true, true ]
+    imu0_differential: false  # If using a real robot you might want to set this to true, since usually absolute measurements from real imu's are not very accurate
     imu0_relative: false
     imu0_queue_size: 10
     imu0_remove_gravitational_acceleration: true
@@ -54,24 +54,24 @@ ekf_filter_node_odom:
 
 ekf_filter_node_map:
   ros__parameters:
-    frequency: 30.0
+    frequency: 20.0
     two_d_mode: true  # Recommended to use 2d mode for nav2 in mostly planar environments
     print_diagnostics: true
     debug: false
     publish_tf: true
 
     map_frame: map
-    odom_frame: odom
-    base_link_frame: base_link # the frame id used by the turtlebot's diff drive plugin
+    odom_frame: panther/odom
+    base_link_frame: panther/base_link # the frame id used by the turtlebot's diff drive plugin
     world_frame: map
 
     # odom0: /panther/odometry/filtered
-    odom0: odometry/local
-    odom0_config: [false, false, false,
-                  false, false, false,
-                  true,  true,  true,
-                  false, false, true,
-                  false, false, false]
+    odom0: /panther/odometry/wheels
+    odom0_config: [ true,  true,  false,
+                    false, false, true,
+                    true,  true,  true,
+                    false, false, true,
+                    false, false, false ]
     odom0_queue_size: 10
     odom0_differential: false
     odom0_relative: false
@@ -86,13 +86,13 @@ ekf_filter_node_map:
     odom1_differential: false
     odom1_relative: false
 
-    imu0: /panther/imu_broadcaster/imu
-    imu0_config: [false, false, false,
-                  false,  false,  true,
-                  false, false, false,
-                  false,  false,  false,
-                  false,  false,  false]
-    imu0_differential: true  # If using a real robot you might want to set this to true, since usually absolute measurements from real imu's are not very accurate
+    imu0: /imu/filtered
+    imu0_config:  [ false,false,false,
+                    true, true, true,
+                    false,false,false,
+                    true, true, true,
+                    true, true, true ]
+    imu0_differential: false  # If using a real robot you might want to set this to true, since usually absolute measurements from real imu's are not very accurate
     imu0_relative: false
     imu0_queue_size: 10
     imu0_remove_gravitational_acceleration: true
@@ -118,11 +118,14 @@ ekf_filter_node_map:
 navsat_transform:
   ros__parameters:
     frequency: 30.0
-    delay: 3.0
-    magnetic_declination_radians: 0.0
-    yaw_offset: 0.0
+    wait_for_datum: false
+    # datum: [46.77459, 23.60802, 360.0]   # approx site; tweak as needed
     zero_altitude: true
-    broadcast_utm_transform: true
-    publish_filtered_gps: true
     use_odometry_yaw: true
-    wait_for_datum: false 
+    broadcast_cartesian_transform: false   # replaces deprecated broadcast_utm_transform
+    publish_filtered_gps: true
+    
+    gps_topic:  /ublox_gps_node/fix
+    imu_topic:  /imu/filtered            # see §3 (IMU filter)
+    odom_topic: /odometry/local
+    
