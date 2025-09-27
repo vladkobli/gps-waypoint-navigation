@@ -97,12 +97,18 @@ from launch.conditions import IfCondition
 from nav2_common.launch import RewrittenYaml
 from launch_ros.actions import Node
 from launch.actions import TimerAction
+from launch.substitutions import Command, PathJoinSubstitution
+
 
 def generate_launch_description():
     # Get the launch directory
     bringup_dir = get_package_share_directory('nav2_bringup')
     gps_wpf_dir = get_package_share_directory(
         "nav2_gps_waypoint_follower_demo")
+    
+    pkg = get_package_share_directory('panther_description')
+    urdf = PathJoinSubstitution([pkg, 'urdf', 'panther.urdf.xacro'])
+    
     launch_dir = os.path.join(gps_wpf_dir, 'launch')
     params_dir = os.path.join(gps_wpf_dir, "config")
     nav2_params = os.path.join(params_dir, "nav2_no_map_params.yaml")
@@ -147,6 +153,23 @@ def generate_launch_description():
         output='screen'
     )
     
+    robot_state_publisher = Node(
+        package="robot_state_publisher",
+        executable="robot_state_publisher",
+        name="robot_state_publisher",
+        output="screen",
+        parameters=[{
+            "robot_description": Command(["xacro ", urdf])
+        }]
+    )
+    ###############
+    gps_static_tf = Node(
+        package="tf2_ros",
+        executable="static_transform_publisher",
+        name="gps_static_tf",
+        arguments=["0.25", "0.0", "1.20", "0", "0", "0", "base_link", "gps_link"]
+    )
+    
     waypoints_arg = DeclareLaunchArgument(
         "waypoints_file",
         default_value=os.path.join(params_dir, "waypoints.yaml"),
@@ -158,6 +181,9 @@ def generate_launch_description():
     ld = LaunchDescription()
 
     # robot localization launch
+    ld.add_action(robot_state_publisher)
+    ld.add_action(gps_static_tf) 
+    
     ld.add_action(robot_localization_cmd)
 
     ######
@@ -176,6 +202,8 @@ def generate_launch_description():
     ld.add_action(rviz_cmd)
     
     ld.add_action(waypoints_arg)
+
+    
 
     # ld.add_action(Node(
     #     period=5.0,

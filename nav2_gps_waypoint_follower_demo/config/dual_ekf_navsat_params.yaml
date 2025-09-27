@@ -118,13 +118,15 @@ ekf_filter_node_map:
 navsat_transform:
   ros__parameters:
     frequency: 30.0
+    delay: 5.0
     wait_for_datum: false
     # datum: [46.77459, 23.60802, 360.0]   # approx site; tweak as needed
     zero_altitude: true
     use_odometry_yaw: true
     broadcast_cartesian_transform: false   # replaces deprecated broadcast_utm_transform
     publish_filtered_gps: true
-    
+    magnetic_declination_radians: 0.111177
+    yaw_offset: 1.570796327  # 90 degrees in radians; adjust to align with IMU
     gps_topic:  /ublox_gps_node/fix
     imu_topic:  /imu/filtered            # see §3 (IMU filter)
     odom_topic: /odometry/local
