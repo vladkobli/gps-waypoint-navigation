@@ -66,7 +66,8 @@ ekf_filter_node_map:
     world_frame: map
 
     # odom0: /panther/odometry/filtered
-    odom0: /panther/odometry/wheels
+    # odom0: /panther/odometry/wheels
+    odom0: odometry/local
     odom0_config: [ true,  true,  false,
                     false, false, true,
                     true,  true,  true,
@@ -123,10 +124,11 @@ navsat_transform:
     # datum: [46.77459, 23.60802, 360.0]   # approx site; tweak as needed
     zero_altitude: true
     use_odometry_yaw: true
+    use_mag: false
     broadcast_cartesian_transform: false   # replaces deprecated broadcast_utm_transform
     publish_filtered_gps: true
     magnetic_declination_radians: 0.111177
-    yaw_offset: 1.570796327  # 90 degrees in radians; adjust to align with IMU
+    yaw_offset: 0.0  # 90 degrees in radians; adjust to align with IMU
     gps_topic:  /ublox_gps_node/fix
     imu_topic:  /imu/filtered            # see §3 (IMU filter)
     odom_topic: /odometry/local

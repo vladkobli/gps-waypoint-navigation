@@ -51,9 +51,10 @@ def generate_launch_description():
                 executable="navsat_transform_node",
                 name="navsat_transform",
                 output="screen",
-                parameters=[rl_params_file],
+                parameters=[rl_params_file, {'publish_filtered_gps': True}],
                 remappings=[
-                    ('imu/data',        '/panther/imu_broadcaster/imu'),
+                    # ('imu/data',        '/panther/imu_broadcaster/imu'),
+                    ('imu/data',        '/imu/filtered'),
                     ('gps/fix',         '/ublox_gps_node/fix'),
                     ('gps/filtered',    'gps/filtered'),
                     ('odometry/gps',    'odometry/gps'),
@@ -72,14 +73,14 @@ def generate_launch_description():
                     ('/imu/data', '/imu/filtered'),
                 ],
             ),
-            launch_ros.actions.Node(
-                package='tf2_ros',
-                executable='static_transform_publisher',
-                name='static_tf_gps',
-                # x y z roll pitch yaw parent child
-                arguments=['0.20', '0.00', '1.00',  '0', '0', '0',  'panther/base_link', 'gps'],
-                output='screen',
-            )
+            # launch_ros.actions.Node(
+            #     package='tf2_ros',
+            #     executable='static_transform_publisher',
+            #     name='static_tf_gps',
+            #     # x y z roll pitch yaw parent child
+            #     arguments=['0.20', '0.00', '1.00',  '0', '0', '0',  'panther/base_link', 'gps'],
+            #     output='screen',
+            # )
             # # (Your waypoint-follower / nav2 controller node)
             # launch_ros.actions.Node(
             #     package="nav2_gps_waypoint_follower_demo",
